@@ -36,7 +36,8 @@ export default class Test extends Command {
 
         if (Object.keys(initialCommands).length === Object.keys(updatedCommands).length) {
             if (_.isEqual(initialCommands, updatedCommands) && diffCommands.length === 0) {
-                console.log('No changes have been detected, the updated command list is good to commit ..');
+                // console.log('No changes have been detected, the updated command list is good to commit ..');
+                // console.log(updatedCommands);
             }
         }
     }
@@ -63,13 +64,14 @@ export default class Test extends Command {
     public async run() {
         const { flags } = this.parse(Test);
         const oldCommandFlags = JSON.parse(fs.readFileSync(flags.goldfile).toString('utf8'));
-        let newCommandFlags = this.config.commands;
-        newCommandFlags = _.sortBy(newCommandFlags, 'id').map(command => {
+        const newCommandFlags = this.config.commands;
+        const resultnewCommandFlags = _.sortBy(newCommandFlags, 'id').map(command => {
             return {
                 command: command.id,
                 flags: Object.entries(command.flags).map(flagName => flagName[0])
             };
         });
-        await this.compareDiff(oldCommandFlags, newCommandFlags);
+        const updatedCommands = await this.compareDiff(oldCommandFlags, resultnewCommandFlags);
+        return updatedCommands;
     }
 }

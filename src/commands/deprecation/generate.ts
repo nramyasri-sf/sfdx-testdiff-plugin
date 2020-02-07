@@ -13,18 +13,18 @@ export default class Generate extends Command {
     public async run() {
         const numberOfSpaceChar: number = 4;
         const { flags } = this.parse(Generate);
-        let commands = this.config.commands;
-        commands = _.sortBy(commands, 'id').map(command => {
+        const commands = this.config.commands;
+        const resultCommands = _.sortBy(commands, 'id').map(command => {
             return {
                 command: command.id,
                 flags: Object.entries(command.flags).map(flagName => flagName[0])
             };
         });
         const filePath = path.join(flags.outputdir, flags.filename);
-        fs.writeFile(filePath, JSON.stringify(commands, null, numberOfSpaceChar),
+        fs.writeFile(filePath, JSON.stringify(resultCommands, null, numberOfSpaceChar),
             err => {
             if (err) throw err;
-            console.log('File Saved ');
+            console.log('File has been saved.');
         });
     }
 
