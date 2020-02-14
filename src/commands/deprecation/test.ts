@@ -36,7 +36,7 @@ export default class Test extends Command {
 
         if (Object.keys(initialCommands).length === Object.keys(updatedCommands).length) {
             if (_.isEqual(initialCommands, updatedCommands) && diffCommands.length === 0) {
-                // console.log('No changes have been detected, the updated command list is good to commit ..');
+                console.log('No changes have been detected, the updated command list is good to commit ..');
                 // console.log(updatedCommands);
             }
         }
