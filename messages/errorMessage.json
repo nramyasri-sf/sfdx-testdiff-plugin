@@ -1,0 +1,4 @@
+{
+    "deletedcommands" : "These commands have been deleted, please check again   : ",
+    "deletedFlags": "There have been changes in the flags of the following commands  : %s. Please check again."
+}

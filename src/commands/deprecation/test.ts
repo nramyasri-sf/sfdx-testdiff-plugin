@@ -1,17 +1,26 @@
 
 import { Command, flags } from '@oclif/command';
+import { Messages } from '@salesforce/core';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('sfdx-testdiff-plugin', 'errorMessage');
 export default class Test extends Command {
 
     public static flags = {
         goldfile: flags.string({ default: './command-gold-file.json' })
     };
 
+    /**
+     * @param initialCommands list of commands from the gold file
+     * @param updatedCommands new list of commands
+     */
+
     public async compareDiff(initialCommands, updatedCommands) {
         let result;
         let diffCommands = [];
+        let errorMessage;
         initialCommands.forEach(intialCommand => {
             updatedCommands.forEach(updatedcommand => {
                 if (intialCommand.command === updatedcommand.command) {
@@ -25,19 +34,18 @@ export default class Test extends Command {
 
         /** Check if existant commands have been deleted */
         if (Object.keys(updatedCommands).length < Object.keys(initialCommands).length) {
-            console.error(`These commands have been deleted, please check again   :  ${this.diffCommands(initialCommands, updatedCommands)}`);
-            process.exit(1);
+            errorMessage = messages.getMessage('deletedcommands');
+            console.error(errorMessage , this.diffCommands(initialCommands, updatedCommands));
         }
 
         if (diffCommands.length > 0) {
+            errorMessage = messages.getMessage('deletedFlags');
             console.error(`There have been changes in the flags of the following commands  :  ${diffCommands}. Please check again.`);
-            process.exit(1);
         }
 
         if (Object.keys(initialCommands).length === Object.keys(updatedCommands).length) {
             if (_.isEqual(initialCommands, updatedCommands) && diffCommands.length === 0) {
                 console.log('No changes have been detected, the updated command list is good to commit ..');
-                // console.log(updatedCommands);
             }
         }
     }
@@ -56,7 +64,7 @@ export default class Test extends Command {
         return result;
     }
 
-    /** Returns the differencw between initial command list and the updated list */
+    /** Returns the difference between initial command list and the updated list */
     public diffCommands(initialCommands, updatedCommands) {
         return initialCommands.filter(i => !updatedCommands.some(u => u.command === i.command));
     }
